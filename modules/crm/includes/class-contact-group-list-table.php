@@ -194,7 +194,9 @@ class Contact_Group_List_Table extends \WP_List_Table {
         // only ncessary because we have sample data
         $args = [
             'offset' => $offset,
-            'number' => $per_page,
+            'number' => $per_page,   
+            'orderby' => 'name',
+            'order' => 'asc'                     
         ];
 
         // Filter for order by
