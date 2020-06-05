@@ -193,14 +193,16 @@ function erp_crm_get_life_stages_dropdown_raw( $label = [], $counts = [] ) {
         'customer'    => 0,
         'lead'        => 0,
         'opportunity' => 0,
-        'subscriber'  => 0
+        'subscriber'  => 0,
+        'inactive'  => 0
     ] );
 
     $life_stages = [
         'customer'    => _n( 'Customer', 'Customers', $counts['customer'], 'erp' ),
         'lead'        => _n( 'Lead', 'Leads', $counts['lead'], 'erp' ),
         'opportunity' => _n( 'Opportunity', 'Opportunities',  $counts['opportunity'], 'erp' ),
-        'subscriber'  => _n( 'Subscriber', 'Subscribers', $counts['subscriber'], 'erp' )
+        'subscriber'  => _n( 'Subscriber', 'Subscribers', $counts['subscriber'], 'erp' ),
+        'inactive'  => _n( 'Inactive', 'Inactive', $counts['inactive'], 'erp' )
     ];
 
     $life_stages = apply_filters( 'erp_crm_life_stages', $life_stages );
@@ -2568,10 +2570,16 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
                 }
             }
 
+            //Get the assigned user.
+            $assigned_user = "";
+            if ( isset( $schedule['extra']['invited_user'] ) && count( $schedule['extra']['invited_user'] ) > 0 ) {
+                $assigned_user = ' [' . $schedule['extra']['invited_user']['0']['name']  . ']';
+            }
+
             if ( 'tasks' === $schedule['type'] && ! empty( $schedule['extra']['task_title'] ) ) {
-                $title = $time . ' | ' . $schedule['extra']['task_title'];
+                $title = $time . $assigned_user . ' | ' . $schedule['extra']['task_title'];
             } else {
-                $title = $time . ' ' . ucfirst( $schedule['log_type'] );
+                $title = $time . $assigned_user . ' '. ucfirst( $schedule['log_type'] ) . ' ' . $schedule['contact']['company'];
             }
 
             $color = $schedule['start_date'] < current_time( 'mysql' ) ? '#f05050' : '#03c756';
