@@ -3978,3 +3978,17 @@ function erp_crm_check_company_contact_relations($id, $id_type) {
         }
     }
 }
+/*
+** Fluid Minds Added - 
+**Send email when a new order is recorded.
+*/
+function send_new_order_email($activity){
+    $headers = array('Content-Type: text/html; charset=UTF-8',
+    'From: S&K Packaging <info@sandkpackaging.com>', 
+    'Reply-To: S&K Packaging <info@sandkpackaging.com>');
+
+    $customer_url = 'http://localhost/sandkpackaging/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=' . $activity['user_id'];
+
+    $message = "A new order was recorded by " .$activity['created_by']['display_name']. " on " .$activity['created_at'] . "<br/> " .$activity['message'] . "<br/><a href=".$customer_url.">Click here to view customer details.</a>" ;
+    wp_mail( 'support@fluidmindsconsulting.com', "New Customer Order", $message , $headers);
+}

@@ -1250,6 +1250,11 @@ class Ajax_Handler {
                     $this->send_error( __( 'Somthing is wrong, Please try later', 'erp' ) );
                 }
 
+                //If this is an order email the appropriate people.
+                if ($data['log_type'] == 'order'){
+                    send_new_order_email($data);
+                }
+
                 $this->send_success( $data );
 
                 break;
