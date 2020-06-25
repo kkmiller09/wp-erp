@@ -52,6 +52,16 @@ foreach ( $reports as $report ) {
 
                 $total += $value;
             }
+
+            //Add reports showing the number of logged activities per user. Managers see all users, agents see just themselves
+            //Relies on dbView plug-in and views being added to the database.
+            if (current_user_can( 'erp_crm_manager' )){
+                echo do_shortcode("[dbview name='activity_report' sort='date' order='desc']"); 
+            }
+            else if (current_user_can( 'erp_crm_agent' )){
+                $current_user_id = get_current_user_id();                
+                echo do_shortcode("[dbview name='activity_report_by_user' arg1='".$current_user_id."' sort='date' order='desc']"); 
+            }
             ?>
         </tbody>
 
