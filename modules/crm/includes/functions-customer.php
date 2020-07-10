@@ -2582,7 +2582,7 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
                 $title = $time . $assigned_user . ' '. ucfirst( $schedule['log_type'] ) . ' ' . $schedule['contact']['company'];
             }
 
-            $color = $schedule['start_date'] < current_time( 'mysql' ) ? '#f05050' : '#03c756';
+            $color = '#03c756';  //S&K wants all items green. They will delete schedules as completed.
 
             $schedules_data[] = [
                 'schedule' => $schedule,

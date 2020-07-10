@@ -216,7 +216,7 @@ $schedules_data = erp_crm_get_schedule_data( $tab );
                                 }
 
                                 var title = time + ' ' + log_title;
-                                var color = new Date( res.start_date ) < new Date() ? '#f05050' : '#03c756';
+                                var color = '#03c756';  //S&K wants all items green. They will delete schedules as completed.
 
                                 var myEvent = {
                                     schedule : res,

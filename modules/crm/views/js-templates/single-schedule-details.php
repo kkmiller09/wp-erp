@@ -21,8 +21,10 @@
         <# } #>
 
         for
-        <# if( _.contains( data.schedule.contact.types , 'company') ) { #>
-            <strong>{{ data.schedule.contact.company }}</strong>
+        <# if( _.contains( data.schedule.contact.types , 'company') ) { 
+            var url = "https://sandkpackaging.com/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=" + data.schedule.contact.id;
+            #>
+            <a href={{url}} target="_blank"><strong>{{ data.schedule.contact.company }}</strong></a>
         <# } else { #>
             <strong>{{ data.schedule.contact.first_name }} {{ data.schedule.contact.last_name }}</strong>
         <# } #>
