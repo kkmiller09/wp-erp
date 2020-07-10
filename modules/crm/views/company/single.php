@@ -72,6 +72,7 @@ $contact_tags = wp_list_pluck( $contact_tags, 'name' );
                         <div class="inside">
                             <ul class="erp-list separated">
                                 <li><?php erp_print_key_value( __( 'Name', 'erp' ), $customer->get_full_name() ); ?></li>
+                                <li><?php erp_print_key_value( __( 'Life Stage', 'erp' ), $customer->get_life_stage() ); ?></li>
                                 <li><?php erp_print_key_value( __( 'Phone', 'erp' ), $customer->get_phone() ); ?></li>
                                 <li><?php erp_print_key_value( __( 'Fax', 'erp' ), $customer->get_fax() ); ?></li>
                                 <li><?php erp_print_key_value( __( 'Website', 'erp' ), $customer->get_website() ); ?></li>
