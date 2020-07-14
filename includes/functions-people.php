@@ -98,10 +98,12 @@ function erp_get_peoples( $args = [] ) {
         if( !empty($contact_owner) ){
             $sql['where'][] = "AND people.contact_owner='$contact_owner'";
         }
-        if ( current_user_can( 'erp_crm_agent' ) ) {
+		/*Allow agents to search across all companies, but restrict their non-search view for ease of use*/
+        if ( current_user_can( 'erp_crm_agent' ) &&  empty( $s ) && empty($args['erpadvancefilter'])) {
             $current_user_id = get_current_user_id();
             $sql['where'][] = "AND people.contact_owner='$current_user_id'";
         }
+        
 
         // Check if the row want to search
         if ( ! empty( $s ) ) {
