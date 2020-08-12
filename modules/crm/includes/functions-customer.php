@@ -2560,8 +2560,13 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
             $start_date = date( 'Y-m-d', strtotime( $schedule['start_date'] ) );
             $end_date   = ( $schedule['end_date'] ) ? date( 'Y-m-d', strtotime( $schedule['end_date'] . '+1 day' ) ) : date( 'Y-m-d', strtotime( $schedule['start_date'] . '+1 day' ) );        // $end_date = $schedule['end_date'];
 
+			//only show future scheduled tasks.
+			if ( $end_date < current_time( 'mysql' ) ) {
+				continue;
+			}
+
             if ( $schedule['start_date'] < current_time( 'mysql' ) ) {
-                $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );
+                $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );                
             } else {
                 if ( date( 'g:i a', strtotime( $schedule['start_date'] ) ) == date( 'g:i a', strtotime( $schedule['end_date'] ) )  || ! $schedule['end_date'] ) {
                     $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );
