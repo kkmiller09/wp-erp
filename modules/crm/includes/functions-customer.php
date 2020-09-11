@@ -719,13 +719,13 @@ function erp_crm_get_feed_activity( $postdata ) {
 
     foreach ( $results as $key => $value ) {
         $value['extra'] = json_decode( base64_decode( $value['extra'] ), true );
-
+/*
         if ( isset( $value['extra']['invite_contact'] ) && ! empty( $postdata['assigned_to'] ) ) {
             if ( ! in_array( $postdata['assigned_to'], $value['extra']['invite_contact'] ) ) {
                 continue;
             }
         }
-
+*/
         if ( isset( $value['extra']['invite_contact'] ) && count( $value['extra']['invite_contact'] ) > 0 ) {
             foreach ( $value['extra']['invite_contact'] as $user_id ) {
                 $value['extra']['invited_user'][] = [
@@ -2576,10 +2576,7 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
             }
 
             //Get the assigned user.
-            $assigned_user = "";
-            if ( isset( $schedule['extra']['invited_user'] ) && count( $schedule['extra']['invited_user'] ) > 0 ) {
-                $assigned_user = ' [' . $schedule['extra']['invited_user']['0']['name']  . ']';
-            }
+            $assigned_user= ' [' . $schedule['created_by']['display_name']  . ']';
 
             if ( 'tasks' === $schedule['type'] && ! empty( $schedule['extra']['task_title'] ) ) {
                 $title = $time . $assigned_user . ' | ' . $schedule['extra']['task_title'];
