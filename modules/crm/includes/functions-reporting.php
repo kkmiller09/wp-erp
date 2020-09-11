@@ -19,6 +19,10 @@ function erp_crm_get_reports() {
             'title'       => esc_html__( 'Growth Report', 'erp' ),
             'description' => esc_html__( 'Growth report for crm', 'erp' )
         ],
+        'order-report'   => [
+            'title'       => esc_html__( 'Order Report', 'erp' ),
+            'description' => esc_html__( 'Order report for crm', 'erp' )
+        ],        
     ];
 
     return apply_filters( 'erp_crm_reports', $reports );
@@ -187,6 +191,52 @@ function erp_crm_growth_report_filter_form( $start = true, $end = true, $type = 
 
     echo '</form>';
 }
+
+/**
+ * Report Order filter form
+ *
+ * @return void
+ * @since  1.3.6
+ *
+ */
+function erp_crm_order_report_filter_form( $start = true, $end = true) {
+    /*
+    if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'erp_crm_nonce_report' ) ) {
+        return;
+    }
+*/
+    $start = $start ? $start : false;
+    $end   = $end ? $end : false;
+    echo '<form class="erp-crm-report-filter-form" action="" method="post">';
+
+    if ( $start ) {
+        erp_html_form_input( array(
+            'name'        => 'start',
+            'type'        => 'text',
+            'class'       => 'erp-date-picker-from',
+            'placeholder' => esc_html__( 'From', 'erp' ),
+            'value'       => isset( $_POST['start'] ) ? sanitize_text_field( wp_unslash( $_POST['start'] ) ): ''
+        ) );
+    }
+
+    if ( $end ) {
+        erp_html_form_input( array(
+            'name'        => 'end',
+            'type'        => 'text',
+            'class'       => 'erp-date-picker-to',
+            'placeholder' => esc_html__( 'To', 'erp' ),
+            'value'       => isset( $_POST['end'] ) ? sanitize_text_field( wp_unslash( $_POST['end'] ) ): ''
+        ) );
+    }
+    
+
+    wp_nonce_field( 'erp_crm_nonce_report' );
+
+    submit_button( esc_html__( 'Filter', 'erp' ), 'secondary', 'erp_crm_report_filter', false );
+
+    echo '</form>';
+}
+
 
 /**
  * Activities report query
@@ -405,3 +455,45 @@ function erp_crm_growth_reporting_query( $start_date, $end_date, $type ) {
     return $reports;
 }
 
+/**
+ * Order report query
+ *
+ * @param string $start
+ * @param string $end
+ *
+ * @return array
+ * @since  1.3.6
+ *
+ */
+function erp_crm_order_reporting_query( $start_date, $end_date ) {
+    $db    = new \WeDevs\ORM\Eloquent\Database();
+
+    $results = \WeDevs\ERP\CRM\Models\Activity::select( [
+        '*',
+        $db->raw( 'MONTHNAME(`created_at`) as feed_month, YEAR( `created_at` ) as feed_year' )
+    ] )
+      ->with( [
+          'contact'    => function ( $query ) {
+              $query->with( 'types' );
+          },
+          'created_by' => function ( $query1 ) {
+              $query1->select( 'ID', 'user_nicename', 'user_email', 'user_url', 'display_name' );
+          }
+      ] );
+
+      $results = $results->where( 'log_type', 'order' );
+
+      if (current_user_can( 'erp_crm_agent' )){
+        $results = $results->where( 'created_by', get_current_user_id() );
+      }
+
+      if ( $start_date ) {
+        //include the end date in the filter.
+        $end_date = $end_date . ' 23:59:59';        
+
+        $results->whereBetween( \WeDevs\ORM\Eloquent\Facades\DB::raw( 'created_at' ), array( $start_date, $end_date ) );
+    }
+
+      $results = $results->orderBy( 'created_at', 'DESC' );
+      return  $results->get()->toArray();
+}

@@ -112,6 +112,15 @@ class Admin_Menu {
             'position'   => 10
         ] );
 
+        erp_add_submenu( 'crm','reports', [
+            'title'      => __( 'Order Report', 'erp' ),
+            'capability' => 'erp_crm_manage_dashboard',
+            'slug'       => 'reports&type=order-report',
+            'callback'   => [ $this, 'page_reports' ],
+            'position'   => 10
+        ] );        
+
+
         erp_add_menu( 'crm', [
             'title'      =>   __( '<span class="erp-help">Help</span>', 'erp' ),
             'capability' => 'erp_crm_manage_dashboard',
@@ -411,6 +420,11 @@ class Admin_Menu {
             case 'growth-report':
                 $template = WPERP_CRM_VIEWS . '/reports/growth-report.php';
                 break;
+
+            case 'order-report':
+                $template = WPERP_CRM_VIEWS . '/reports/order-report.php';
+                break;
+    
 
             default:
                 $template = WPERP_CRM_VIEWS . '/reports.php';
