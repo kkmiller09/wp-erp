@@ -3836,7 +3836,7 @@ function erp_crm_update_contact_owner( $contact_id, $owner_id, $field_type = 'us
  * @return array
  */
 function erp_crm_get_contact_groups_list() {
-    $groups         = \WeDevs\ERP\CRM\Models\ContactGroup::select( 'id', 'name' )->get();
+    $groups         = \WeDevs\ERP\CRM\Models\ContactGroup::select( 'id', 'name' )->orderBy('name')->get();
     $contact_groups = apply_filters( 'erp_crm_get_contact_group_list', $groups );
 
     $list = [];
