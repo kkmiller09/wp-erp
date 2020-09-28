@@ -4084,3 +4084,18 @@ function send_new_order_email($activity){
     $message = "A new order was recorded by " .$activity['created_by']['display_name']. " on " .$activity['created_at'] . "<br/> " .$activity['message'] . "<br/><a href=".$customer_url.">Click here to view customer details.</a>" ;
     wp_mail( 'support@fluidmindsconsulting.com', "New Customer Order", $message , $headers);
 }
+
+/*
+** Fluid Minds Added - 
+**Send email when a new quote is recorded.
+*/
+function send_new_quote_email($activity){
+    $headers = array('Content-Type: text/html; charset=UTF-8',
+    'From: S&K Packaging <info@sandkpackaging.com>', 
+    'Reply-To: S&K Packaging <info@sandkpackaging.com>');
+
+    $customer_url = 'https://localhost/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=' . $activity['user_id'];
+
+    $message = "A new quote was recorded by " .$activity['created_by']['display_name']. " on " .$activity['created_at'] . "<br/> " .$activity['message'] . "<br/><a href=".$customer_url.">Click here to view customer details.</a>" ;
+    wp_mail( 'support@fluidmindsconsulting.com', "New Customer Quote", $message , $headers);
+}
