@@ -11,7 +11,7 @@
             <# } else if( ( data.schedule.type == 'log_activity' ) && ( new Date( Date.now() - 24*60*60*1000 )  <= new Date( data.schedule.start_date ) ) ) { #>
             <?php esc_attr_e( 'have scheduled', 'erp' ) ?>
         <# } else { #>
-            <?php esc_attr_e( 'logged', 'erp' ) ?>
+            <?php esc_attr_e( 'logged', 'erp' ); ?>
         <# } #>
 
         <# if( data.schedule.log_type == 'sms' || data.schedule.log_type == 'email' ) {  #>
@@ -72,7 +72,7 @@
     <hr>
     <# if( data.schedule.log_type == 'email' ) { #>
         <span class='email_subject'>
-                <?php esc_attr_e('Subject', 'erp' ) ?> : {{ data.schedule.email_subject }}
+                <?php esc_attr_e( 'Subject', 'erp' ); ?> : {{ data.schedule.email_subject }}
         </span> |
     <# } #>
 

@@ -19,7 +19,7 @@ $customer_id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
     </p>
 
     <p v-if="feedData.log_type == 'email'">
-        <label><?php esc_attr_e( 'Subject', 'erp' ) ?></label>
+        <label><?php esc_attr_e( 'Subject', 'erp' ); ?></label>
         <span class="sep">:</span>
         <span class="value">
             <input type="text" class="email_subject" name="email_subject" v-model="feedData.email_subject" placeholder="<?php esc_attr_e( 'Subject log...', 'erp' ); ?>">
@@ -27,13 +27,13 @@ $customer_id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
     </p>
 
     <p v-if="feedData.log_type == 'meeting'">
-        <select name="selected_contact" id="erp-crm-activity-invite-contact" v-model="feedData.inviteContact" v-selecttwo="feedData.inviteContact" class="select2" multiple="multiple" style="width: 100%" data-placeholder="<?php esc_attr_e( 'Agents or managers..', 'erp' ) ?>">
-            <?php echo wp_kses( erp_crm_get_crm_user_html_dropdown(), array(
-                'option' => array(
-                    'value' => array(),
-                    'selected' => array()
-                ),
-            ) ); ?>
+        <select name="selected_contact" id="erp-crm-activity-invite-contact" v-model="feedData.inviteContact" v-selecttwo="feedData.inviteContact" class="select2" multiple="multiple" style="width: 100%" data-placeholder="<?php esc_attr_e( 'Agents or managers..', 'erp' ); ?>">
+            <?php echo wp_kses( erp_crm_get_crm_user_html_dropdown(), [
+                'option' => [
+                    'value'    => [],
+                    'selected' => [],
+                ],
+            ] ); ?>
         </select>
     </p>
 
