@@ -215,6 +215,53 @@ function erp_crm_get_life_stages_dropdown_raw( $label = [], $counts = [] ) {
 }
 
 /**
+ * Get CRM S&K Custom Industries
+ *
+ * @since 1.0
+ * @since 1.1.16 Append extra `label` after the filter applied
+ *
+ * @param array $label
+ *
+ * @return array
+ */
+function erp_crm_get_industry_dropdown_raw( $label = [], $counts = [] ) {
+
+    $counts = wp_parse_args( $counts, [
+        'adhesives'    => 0,
+        'aggregates'        => 0,
+        'feed' => 0,
+        'fertilizer'    => 0,
+        'hemp'        => 0,
+        'other' => 0,
+        'perlite'        => 0,
+        'potatoes' => 0,
+        'powder' => 0,
+        'rubber'        => 0,
+        'wood' => 0,
+    ] );
+
+    $industries = [
+        'adhesives'    => _n( 'Adhesives', 'Adhesives', $counts['adhesives'], 'erp' ),
+        'aggregates'        => _n( 'Aggregates', 'Aggregates', $counts['aggregates'], 'erp' ),
+        'feed' => _n( 'Feed and Seed', 'Feed and Seed',  $counts['feed'], 'erp' ),
+        'fertilizer'    => _n( 'Fertilizer', 'Fertilizer', $counts['fertilizer'], 'erp' ),
+        'hemp'        => _n( 'Hemp', 'Hemp', $counts['hemp'], 'erp' ),
+        'other' => _n( 'Other', 'Other',  $counts['other'], 'erp' ),
+        'perlite'    => _n( 'Perlite', 'Perlite', $counts['perlite'], 'erp' ),
+        'potatoes'        => _n( 'Potatoes', 'Potatoes', $counts['potatoes'], 'erp' ),
+        'powder' => _n( 'Powder', 'Powder',  $counts['powder'], 'erp' ),
+        'rubber'        => _n( 'Rubber', 'Rubber', $counts['rubber'], 'erp' ),
+        'wood' => _n( 'Wood Shavings/Mulch/Chips', 'Wood Shavings/Mulch/Chips',  $counts['wood'], 'erp' ),
+    ];
+
+    if ( $label ) {
+        $industries = $label + $industries;
+    }
+
+    return $industries;
+}
+
+/**
  * Get customer type
  *
  * @since 1.0
@@ -253,6 +300,29 @@ function erp_crm_get_life_stages_dropdown( $label = [], $selected = '' ) {
 
     if ( $life_stages ) {
         foreach ( $life_stages as $key => $title ) {
+            $dropdown .= sprintf( "<option value='%s'%s>%s</option>\n", $key, selected( $selected, $key, false ), $title );
+        }
+    }
+
+    return $dropdown;
+}
+
+/**
+ * Get industry as a select option dropdown
+ *
+ * @since 1.0
+ *
+ * @param  string $selected
+ *
+ * @return html
+ */
+function erp_crm_get_industry_dropdown( $label = [], $selected = '' ) {
+
+    $industries = erp_crm_get_industry_dropdown_raw( $label );
+    $dropdown    = '';
+
+    if ( $industries ) {
+        foreach ( $industries as $key => $title ) {
             $dropdown .= sprintf( "<option value='%s'%s>%s</option>\n", $key, selected( $selected, $key, false ), $title );
         }
     }
@@ -719,13 +789,13 @@ function erp_crm_get_feed_activity( $postdata ) {
 
     foreach ( $results as $key => $value ) {
         $value['extra'] = json_decode( base64_decode( $value['extra'] ), true );
-/*
+
         if ( isset( $value['extra']['invite_contact'] ) && ! empty( $postdata['assigned_to'] ) ) {
             if ( ! in_array( $postdata['assigned_to'], $value['extra']['invite_contact'] ) ) {
                 continue;
             }
         }
-*/
+
         if ( isset( $value['extra']['invite_contact'] ) && count( $value['extra']['invite_contact'] ) > 0 ) {
             foreach ( $value['extra']['invite_contact'] as $user_id ) {
                 $value['extra']['invited_user'][] = [
@@ -1806,6 +1876,16 @@ function erp_crm_get_serach_key( $type = '' ) {
                 '<>' => __( 'Between', 'erp' ),
             ]
         ],
+
+        'industry' => [
+            'title'     => __( 'Industry', 'erp' ),
+            'type'      => 'dropdown',
+            'text'      => '',
+            'condition' => [
+                ''  => __( 'is', 'erp' )                
+            ],
+            'options'   => erp_crm_get_industry_dropdown()
+        ],
     ];
 
     if ( 'contact' == $type ) {
@@ -2559,14 +2639,14 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
         foreach ( $schedules as $key => $schedule ) {
             $start_date = date( 'Y-m-d', strtotime( $schedule['start_date'] ) );
             $end_date   = ( $schedule['end_date'] ) ? date( 'Y-m-d', strtotime( $schedule['end_date'] . '+1 day' ) ) : date( 'Y-m-d', strtotime( $schedule['start_date'] . '+1 day' ) );        // $end_date = $schedule['end_date'];
-
+/*
 			//only show future scheduled tasks.
 			if ( $end_date < current_time( 'mysql' ) ) {
 				continue;
 			}
-
+			*/
             if ( $schedule['start_date'] < current_time( 'mysql' ) ) {
-                $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );                
+                $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );				
             } else {
                 if ( date( 'g:i a', strtotime( $schedule['start_date'] ) ) == date( 'g:i a', strtotime( $schedule['end_date'] ) )  || ! $schedule['end_date'] ) {
                     $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );
@@ -2575,8 +2655,17 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
                 }
             }
 
+
             //Get the assigned user.
+            $assigned_user = "";
+			/*
+            if ( isset( $schedule['extra']['invited_user'] ) && count( $schedule['extra']['invited_user'] ) > 0 ) {
+                $assigned_user = ' [' . $schedule['extra']['invited_user']['0']['name']  . ']';
+            }
+			*/
+			
             $assigned_user= ' [' . $schedule['created_by']['display_name']  . ']';
+
 
             if ( 'tasks' === $schedule['type'] && ! empty( $schedule['extra']['task_title'] ) ) {
                 $title = $time . $assigned_user . ' | ' . $schedule['extra']['task_title'];
@@ -3837,6 +3926,7 @@ function erp_crm_update_contact_owner( $contact_id, $owner_id, $field_type = 'us
  */
 function erp_crm_get_contact_groups_list() {
     $groups         = \WeDevs\ERP\CRM\Models\ContactGroup::select( 'id', 'name' )->orderBy('name')->get();
+
     $contact_groups = apply_filters( 'erp_crm_get_contact_group_list', $groups );
 
     $list = [];
