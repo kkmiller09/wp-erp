@@ -45,6 +45,7 @@ $schedules_data = erp_crm_get_schedule_data( $tab );
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             },
+            defaultView:'agendaDay', 
             editable: false,
             eventLimit: false,
             events: <?php echo json_encode( $schedules_data ); ?>,
