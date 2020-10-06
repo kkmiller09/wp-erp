@@ -230,6 +230,7 @@ function erp_crm_get_industry_dropdown_raw( $label = [], $counts = [] ) {
         'perlite'        => 0,
         'potatoes' => 0,
         'powder' => 0,
+        'silt' => 0,
         'rubber'        => 0,
         'wood' => 0,
     ] );
@@ -244,6 +245,7 @@ function erp_crm_get_industry_dropdown_raw( $label = [], $counts = [] ) {
         'perlite'    => _n( 'Perlite', 'Perlite', $counts['perlite'], 'erp' ),
         'potatoes'        => _n( 'Potatoes', 'Potatoes', $counts['potatoes'], 'erp' ),
         'powder' => _n( 'Powder', 'Powder',  $counts['powder'], 'erp' ),
+        'silt' => _n( 'Silt Fencing', 'Silt Fencing',  $counts['silt'], 'erp' ),
         'rubber'        => _n( 'Rubber', 'Rubber', $counts['rubber'], 'erp' ),
         'wood' => _n( 'Wood Shavings/Mulch/Chips', 'Wood Shavings/Mulch/Chips',  $counts['wood'], 'erp' ),
     ];
