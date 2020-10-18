@@ -4079,3 +4079,18 @@ function send_new_quote_email($activity){
     $message = "A new quote was recorded by " .$activity['created_by']['display_name']. " on " .$activity['created_at'] . "<br/> " .$activity['message'] . "<br/><a href=".$customer_url.">Click here to view customer details.</a>" ;
     wp_mail( 'shawnstackis@sandkpackaging.com,eric@sandkpackaging.com', "New Customer Quote from " .$activity['contact']['company'], $message , $headers);
 }
+
+/*
+** Fluid Minds Added - 
+**Send email when a new sample is recorded.
+*/
+function send_new_sample_email($activity){
+    $headers = array('Content-Type: text/html; charset=UTF-8',
+    'From: S&K Packaging <info@sandkpackaging.com>', 
+    'Reply-To: S&K Packaging <info@sandkpackaging.com>');
+
+    $customer_url = 'https://sandkpackaging.com/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=' . $activity['user_id'];
+
+    $message = "A new sample was recorded by " .$activity['created_by']['display_name']. " on " .$activity['created_at'] . "<br/> " .$activity['message'] . "<br/><a href=".$customer_url.">Click here to view customer details.</a>" ;
+    wp_mail( 'shawnstackis@sandkpackaging.com,eric@sandkpackaging.com', "New Customer Sample from " .$activity['contact']['company'], $message , $headers);
+}

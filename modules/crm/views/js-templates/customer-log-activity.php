@@ -11,6 +11,7 @@ $customer_id = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
             <!-- <option value="sms"><?php esc_attr_e( 'Log an SMS', 'erp' ) ?></option> -->
             <option value="order"><?php esc_attr_e( 'Log an Order', 'erp' ) ?></option>			
             <option value="quote"><?php esc_attr_e( 'Log a Quote', 'erp' ) ?></option>	
+			<option value="sample"><?php esc_attr_e( 'Log a Sample', 'erp' ) ?></option>	
         </select>
 
         <input class="erp-right" v-model="feedData.tp" type="text" v-timepicker="feedData.tp" placeholder="12.00pm" size="10">

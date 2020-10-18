@@ -1255,6 +1255,12 @@ class Ajax_Handler {
                 if ($data['log_type'] == 'quote'){
                     send_new_quote_email($data);
                 }
+				
+
+                //If this is a sample email the appropriate people.
+                if ($data['log_type'] == 'sample'){
+                    send_new_sample_email($data);
+                }				
 
                 $this->send_success( $data );
 

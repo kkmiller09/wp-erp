@@ -127,7 +127,15 @@ class Admin_Menu {
             'slug'       => 'reports&type=quote-report',
             'callback'   => [ $this, 'page_reports' ],
             'position'   => 10
-        ] );        
+        ] );  
+
+        erp_add_submenu( 'crm','reports', [
+            'title'      => __( 'Sample Report', 'erp' ),
+            'capability' => 'erp_crm_manage_dashboard',
+            'slug'       => 'reports&type=sample-report',
+            'callback'   => [ $this, 'page_reports' ],
+            'position'   => 10
+        ] ); 		
 
         erp_add_menu( 'crm', [
             'title'      => __( '<span class="erp-help">Help</span>', 'erp' ),
@@ -432,6 +440,10 @@ class Admin_Menu {
             case 'quote-report':
                 $template = WPERP_CRM_VIEWS . '/reports/quote-report.php';
                 break;
+    
+            case 'sample-report':
+                $template = WPERP_CRM_VIEWS . '/reports/sample-report.php';
+                break;				
     
             default:
                 $template = WPERP_CRM_VIEWS . '/reports.php';
