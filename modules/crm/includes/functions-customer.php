@@ -223,6 +223,7 @@ function erp_crm_get_industry_dropdown_raw( $label = [], $counts = [] ) {
     $counts = wp_parse_args( $counts, [
         'adhesives'    => 0,
         'aggregates'        => 0,
+		'bean' => 0,
         'feed' => 0,
         'fertilizer'    => 0,
         'hemp'        => 0,
@@ -238,7 +239,8 @@ function erp_crm_get_industry_dropdown_raw( $label = [], $counts = [] ) {
     $industries = [
         'adhesives'    => _n( 'Adhesives', 'Adhesives', $counts['adhesives'], 'erp' ),
         'aggregates'        => _n( 'Aggregates', 'Aggregates', $counts['aggregates'], 'erp' ),
-        'feed' => _n( 'Feed and Seed', 'Feed and Seed',  $counts['feed'], 'erp' ),
+		'bean' => _n( 'Bean and Seed', 'Bean and Seed',  $counts['bean'], 'erp' ),
+        'feed' => _n( 'Feed', 'Feed',  $counts['feed'], 'erp' ),
         'fertilizer'    => _n( 'Fertilizer', 'Fertilizer', $counts['fertilizer'], 'erp' ),
         'hemp'        => _n( 'Hemp', 'Hemp', $counts['hemp'], 'erp' ),
         'other' => _n( 'Other', 'Other',  $counts['other'], 'erp' ),
@@ -4057,10 +4059,10 @@ function send_new_order_email($activity){
     'From: S&K Packaging <info@sandkpackaging.com>', 
     'Reply-To: S&K Packaging <info@sandkpackaging.com>');
 
-    $customer_url = 'http://localhost/sandkpackaging/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=' . $activity['user_id'];
+    $customer_url = 'http://sandkpackaging.com/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=' . $activity['user_id'];
 
     $message = "A new order was recorded by " .$activity['created_by']['display_name']. " on " .$activity['created_at'] . "<br/> " .$activity['message'] . "<br/><a href=".$customer_url.">Click here to view customer details.</a>" ;
-    wp_mail( 'support@fluidmindsconsulting.com', "New Customer Order", $message , $headers);
+    wp_mail( 'shawnstackis@sandkpackaging.com,eric@sandkpackaging.com', "New Customer Order from " .$activity['contact']['company'], $message , $headers);
 }
 
 /*
@@ -4072,8 +4074,8 @@ function send_new_quote_email($activity){
     'From: S&K Packaging <info@sandkpackaging.com>', 
     'Reply-To: S&K Packaging <info@sandkpackaging.com>');
 
-    $customer_url = 'https://localhost/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=' . $activity['user_id'];
+    $customer_url = 'https://sandkpackaging.com/wp-admin/admin.php?page=erp-crm&section=companies&action=view&id=' . $activity['user_id'];
 
     $message = "A new quote was recorded by " .$activity['created_by']['display_name']. " on " .$activity['created_at'] . "<br/> " .$activity['message'] . "<br/><a href=".$customer_url.">Click here to view customer details.</a>" ;
-    wp_mail( 'support@fluidmindsconsulting.com', "New Customer Quote", $message , $headers);
+    wp_mail( 'shawnstackis@sandkpackaging.com,eric@sandkpackaging.com', "New Customer Quote from " .$activity['contact']['company'], $message , $headers);
 }
