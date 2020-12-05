@@ -26,15 +26,6 @@
                     </span>
                 </p>
 
-                <p class="erp-left schedule-end">
-                    <label><?php esc_attr_e( 'End', 'erp' ); ?></label>
-                    <span class="sep">:</span>
-                    <span class="value">
-                        <input class="start-date erp-date-field" required name="end_date" type="text" value="{{ data.current_date }}"  placeholder="yy-mm-dd"><span class="datetime-sep">@</span>
-                        <input class="start-time erp-time-field" required name="end_time" type="text" placeholder="12.00pm" size="10">
-                    </span>
-                </p>
-
                 <p class="erp-left schedule-all-day">
                     <input type="checkbox" name="all_day" value="true"> <?php esc_attr_e( 'All Day', 'erp' ); ?>
                 </p>

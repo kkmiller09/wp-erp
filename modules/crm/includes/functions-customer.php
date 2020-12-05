@@ -683,7 +683,7 @@ function erp_crm_customer_prepare_schedule_postdata( $postdata ) {
         'type'       => 'schedule',
         'log_type'   => ( isset( $postdata['schedule_type'] ) && ! empty( $postdata['schedule_type'] ) ) ? $postdata['schedule_type'] : '',
         'start_date' => date( 'Y-m-d H:i:s', strtotime( $postdata['start_date'] . $start_time ) ),
-        'end_date'   => date( 'Y-m-d H:i:s', strtotime( $postdata['end_date'] . $end_time ) ),
+        'end_date'   => date( 'Y-m-d H:i:s', strtotime( $postdata['start_date'] . $end_time ) ), //no longer showing end date, just default to start date.
         'extra'      => base64_encode( json_encode( $extra_data ) ),
     ];
 
@@ -766,7 +766,7 @@ function erp_crm_get_feed_activity( $postdata ) {
         $results = $results->where( $db->raw( "DATE_FORMAT( `created_at`, '%Y-%m-%d' )" ), $postdata['created_at'] );
     }
 
-    $results = $results->orderBy( 'start_date', 'ASC' );
+    $results = $results->orderBy( 'start_date', 'DESC' );
 
     if ( isset( $postdata['limit'] ) && $postdata['limit'] != - 1 ) {
         $results = $results->skip( $postdata['offset'] )->take( $postdata['limit'] );
@@ -2630,7 +2630,7 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
                 if ( date( 'g:i a', strtotime( $schedule['start_date'] ) ) == date( 'g:i a', strtotime( $schedule['end_date'] ) ) || ! $schedule['end_date'] ) {
                     $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );
                 } else {
-                    $time = date( 'g:i a', strtotime( $schedule['start_date'] ) ) . ' to ' . date( 'g:i a', strtotime( $schedule['end_date'] ) );
+                    $time = date( 'g:i a', strtotime( $schedule['start_date'] ) );
                 }
             }
 

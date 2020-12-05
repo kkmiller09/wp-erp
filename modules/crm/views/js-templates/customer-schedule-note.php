@@ -19,15 +19,6 @@ $notification_types = erp_crm_activity_schedule_notification_type();
             </span>
         </p>
 
-        <p class="erp-left schedule-end">
-            <label><?php esc_attr_e( 'End', 'erp' ); ?></label>
-            <span class="sep">:</span>
-            <span class="value">
-                <input class="start-date" v-model="feedData.dtEnd" type="text" v-datepicker="feedData.dtEnd" datedisable="previous" placeholder="yy-mm-dd"><span v-show="!feedData.all_day">@</span>
-                <input class="start-time" v-model="feedData.tpEnd" type="text" v-timepicker="feedData.tpEnd" placeholder="12.00pm" size="10" v-show="!feedData.all_day">
-            </span>
-        </p>
-
         <p class="erp-left schedule-all-day">
             <input type="checkbox" name="all_day" v-model="feedData.all_day"> <?php esc_attr_e( 'All Day', 'erp' ); ?>
         </p>

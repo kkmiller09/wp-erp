@@ -574,8 +574,6 @@ Vue.component( 'schedule-note', {
                 schedule_title              : !!this.feedData.schedule_title,
                 startDate                   : !!this.feedData.dtStart,
                 startTime                   : ( ! this.feedData.all_day ) ? !!this.feedData.tpStart : true,
-                endDate                     : !!this.feedData.dtEnd,
-                endTime                     : ( ! this.feedData.all_day ) ? !!this.feedData.tpEnd : true,
                 schedule_type               : !!this.feedData.schedule_type,
                 notification_via            : ( this.feedData.allow_notification ) ? !!this.feedData.notification_via : true,
                 notification_time_interval  : ( this.feedData.allow_notification ) ? !!this.feedData.notification_time_interval : true,

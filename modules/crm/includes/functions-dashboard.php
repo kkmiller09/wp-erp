@@ -244,13 +244,13 @@ function erp_crm_dashboard_widget_my_schedules() {
                                             if ( wperp.dateFormat( response.start_date, 'Y-m-d' ) == wperp.dateFormat( response.end_date, 'Y-m-d' ) ) {
                                                 var datetime = startDate;
                                             } else {
-                                                var datetime = startDate + ' to ' + endDate;
+                                                var datetime = startDate;
                                             }
                                         } else {
                                             if ( wperp.dateFormat( response.start_date, 'Y-m-d' ) == wperp.dateFormat( response.end_date, 'Y-m-d' ) ) {
-                                                var datetime = startDate + ' at ' + startTime + ' to ' + endTime;
+                                                var datetime = startDate + ' at ' + startTime;
                                             } else {
-                                                var datetime = startDate + ' at ' + startTime + ' to ' + endDate + ' at ' + endTime;
+                                                var datetime = startDate + ' at ' + startTime;
                                             }
                                         }
                                     }

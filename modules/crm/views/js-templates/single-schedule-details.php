@@ -8,7 +8,7 @@
 
         <# if ( data.schedule.type == 'tasks' ) { #>
             <?php esc_attr_e( 'assigned a task', 'erp' ); ?>
-            <# } else if( ( data.schedule.type == 'schedule' ) { #>
+            <# } else if( ( data.schedule.type == 'schedule' )) { #>
             <?php esc_attr_e( 'have scheduled', 'erp' ) ?>
         <# } else { #>
             <?php esc_attr_e( 'logged', 'erp' ); ?>
