@@ -185,7 +185,7 @@ function erp_crm_dashboard_widget_my_schedules() {
     $args           = [
         'created_by' => $user_id,
         'number'     => -1,
-        'type'       => 'log_activity',
+        'type'       => 'schedule',
     ];
 
     $schedules      = erp_crm_get_feed_activity( $args );

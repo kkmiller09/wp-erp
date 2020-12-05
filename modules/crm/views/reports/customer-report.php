@@ -35,16 +35,6 @@ $life_stages  = erp_crm_get_life_stages_dropdown_raw();
     }
 
     $data =  apply_filters( 'erp_crm_customer_report', $data ); ?>
-			    <?php
-                //Relies on dbView plug-in and views being added to the database.
-                if (current_user_can( 'erp_crm_manager' )){
-                    echo do_shortcode("[dbview name='all_customers' sort='Next_Activity_Date' order='asc']"); 
-                }
-                else if (current_user_can( 'erp_crm_agent' )){
-                    $current_user_id = get_current_user_id();                					
-                    echo do_shortcode("[dbview name='agent_callsheet' sort='Next_Activity_Date' order='asc' arg1=".$current_user_id." ]");                 										
-                }                
-            ?>
             <tr>
                 <td><?php esc_attr_e( 'All', 'erp' ); ?></td>
                 <?php foreach ( $life_stages as $slug => $title ) { ?>

@@ -74,7 +74,7 @@ class Schedules_Controller extends REST_Controller {
         $args = [
             'limit'  => $request['per_page'],
             'offset' => ( $request['per_page'] * ( $request['page'] - 1 ) ),
-            'type'   => 'log_activity',
+            'type'   => 'schedule',
         ];
 
         $items       = erp_crm_get_feed_activity( $args );

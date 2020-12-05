@@ -48,6 +48,7 @@ $schedules_data = erp_crm_get_schedule_data( $tab );
             defaultView:'agendaDay', 
             editable: false,
             eventLimit: false,
+            eventOrder:"start_date, assigned_user",            
             events: <?php echo json_encode( $schedules_data ); ?>,
             eventClick: function(calEvent, jsEvent, view) {
                 var scheduleId = calEvent.schedule.id;

@@ -25,11 +25,11 @@ function erp_crm_get_reports() {
         'quote-report'   => [
             'title'       => esc_html__( 'Quote Report', 'erp' ),
             'description' => esc_html__( 'Quote report for crm', 'erp' )
-        ],     
+        ], 
         'sample-report'   => [
             'title'       => esc_html__( 'Sample Report', 'erp' ),
             'description' => esc_html__( 'Sample report for crm', 'erp' )
-        ], 		
+        ],         
     ];
 
     return apply_filters( 'erp_crm_reports', $reports );
@@ -289,51 +289,6 @@ function erp_crm_quote_report_filter_form( $start = true, $end = true) {
     echo '</form>';
 }
 
-/**
- * Report Quote filter form
- *
- * @return void
- * @since  1.3.6
- *
- */
-function erp_crm_sample_report_filter_form( $start = true, $end = true) {
-    /*
-    if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['_wpnonce'] ), 'erp_crm_nonce_report' ) ) {
-        return;
-    }
-*/
-    $start = $start ? $start : false;
-    $end   = $end ? $end : false;
-    echo '<form class="erp-crm-report-filter-form" action="" method="post">';
-
-    if ( $start ) {
-        erp_html_form_input( array(
-            'name'        => 'start',
-            'type'        => 'text',
-            'class'       => 'erp-date-picker-from',
-            'placeholder' => esc_html__( 'From', 'erp' ),
-            'value'       => isset( $_POST['start'] ) ? sanitize_text_field( wp_unslash( $_POST['start'] ) ): ''
-        ) );
-    }
-
-    if ( $end ) {
-        erp_html_form_input( array(
-            'name'        => 'end',
-            'type'        => 'text',
-            'class'       => 'erp-date-picker-to',
-            'placeholder' => esc_html__( 'To', 'erp' ),
-            'value'       => isset( $_POST['end'] ) ? sanitize_text_field( wp_unslash( $_POST['end'] ) ): ''
-        ) );
-    }
-    
-
-    wp_nonce_field( 'erp_crm_nonce_report' );
-
-    submit_button( esc_html__( 'Filter', 'erp' ), 'secondary', 'erp_crm_report_filter', false );
-
-    echo '</form>';
-}
-
 
 /**
  * Activities report query
@@ -355,6 +310,21 @@ function erp_crm_activity_reporting_query( $start_date, $end_date ) {
         ] );
     }
 
+    $args = [
+        'number' => - 1,
+        'type'   => [ 'log_activity', 'tasks' ],
+    ];
+
+    /*
+     * If user is not a CRM Manager then he/she should always see only activities assigned to him/her.
+     * For CRM Managers, in "My Schedules" tab should only show the activities assigned to him/her.
+     * "All Schedules" should show all activities
+     */
+    if ( ! current_user_can( erp_crm_get_manager_role() )) {
+        $args['assigned_to'] = get_current_user_id();
+    }
+    $schedules      = erp_crm_get_feed_activity( $args );
+    
     return $activities->groupBy( 'type' )->orderBy( 'total', 'desc' )->get();
 }
 
@@ -626,49 +596,6 @@ function erp_crm_quote_reporting_query( $start_date, $end_date ) {
       ] );
 
       $results = $results->where( 'log_type', 'quote' );
-
-      if (current_user_can( 'erp_crm_agent' )){
-        $results = $results->where( 'created_by', get_current_user_id() );
-      }
-
-      if ( $start_date ) {
-        //include the end date in the filter.
-        $end_date = $end_date . ' 23:59:59';        
-
-        $results->whereBetween( \WeDevs\ORM\Eloquent\Facades\DB::raw( 'created_at' ), array( $start_date, $end_date ) );
-    }
-
-      $results = $results->orderBy( 'created_at', 'DESC' );
-      return  $results->get()->toArray();
-}
-
-/**
- * Quote report query
- *
- * @param string $start
- * @param string $end
- *
- * @return array
- * @since  1.3.6
- *
- */
-function erp_crm_sample_reporting_query( $start_date, $end_date ) {
-    $db    = new \WeDevs\ORM\Eloquent\Database();
-
-    $results = \WeDevs\ERP\CRM\Models\Activity::select( [
-        '*',
-        $db->raw( 'MONTHNAME(`created_at`) as feed_month, YEAR( `created_at` ) as feed_year' )
-    ] )
-      ->with( [
-          'contact'    => function ( $query ) {
-              $query->with( 'types' );
-          },
-          'created_by' => function ( $query1 ) {
-              $query1->select( 'ID', 'user_nicename', 'user_email', 'user_url', 'display_name' );
-          }
-      ] );
-
-      $results = $results->where( 'log_type', 'sample' );
 
       if (current_user_can( 'erp_crm_agent' )){
         $results = $results->where( 'created_by', get_current_user_id() );

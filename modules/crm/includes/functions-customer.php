@@ -664,8 +664,8 @@ function erp_crm_customer_prepare_schedule_postdata( $postdata ) {
     $extra_data['notification_time']          = ( isset( $postdata['notification_time'] ) && $extra_data['allow_notification'] == 'true' ) ? $postdata['notification_time'] : '';
     $extra_data['notification_time_interval'] = ( isset( $postdata['notification_time_interval'] ) && $extra_data['allow_notification'] == 'true' ) ? $postdata['notification_time_interval'] : '';
 
-    $start_time = ( isset( $postdata['start_time'] ) && $extra_data['all_day'] == 'false' ) ? $postdata['start_time'] : '00:00:00';
-    $end_time   = ( isset( $postdata['end_time'] ) && $extra_data['all_day'] == 'false' ) ? $postdata['end_time'] : '00:00:00';
+    $start_time = ( isset( $postdata['start_time'] ) && $extra_data['all_day'] == 'false' ) ? $postdata['start_time'] : '23:59:59';
+    $end_time   = ( isset( $postdata['end_time'] ) && $extra_data['all_day'] == 'false' ) ? $postdata['end_time'] : '23:59:59';
 
     if ( $extra_data['allow_notification'] == 'true' ) {
         $notify_date = new \DateTime( $postdata['start_date'] . $start_time );
@@ -680,7 +680,7 @@ function erp_crm_customer_prepare_schedule_postdata( $postdata ) {
         'user_id'    => $postdata['user_id'],
         'created_by' => $postdata['created_by'],
         'message'    => $postdata['message'],
-        'type'       => 'log_activity',
+        'type'       => 'schedule',
         'log_type'   => ( isset( $postdata['schedule_type'] ) && ! empty( $postdata['schedule_type'] ) ) ? $postdata['schedule_type'] : '',
         'start_date' => date( 'Y-m-d H:i:s', strtotime( $postdata['start_date'] . $start_time ) ),
         'end_date'   => date( 'Y-m-d H:i:s', strtotime( $postdata['end_date'] . $end_time ) ),
@@ -722,7 +722,7 @@ function erp_crm_get_feed_activity( $postdata ) {
 
     $results = \WeDevs\ERP\CRM\Models\Activity::select( [
         '*',
-        $db->raw( 'MONTHNAME(`created_at`) as feed_month, YEAR( `created_at` ) as feed_year' ),
+        $db->raw( 'MONTHNAME(`start_date`) as feed_month, YEAR( `start_date` ) as feed_year' ),
     ] )
         ->with( [
           'contact'    => function ( $query ) {
@@ -750,9 +750,9 @@ function erp_crm_get_feed_activity( $postdata ) {
 
     if ( isset( $postdata['type'] ) && ! empty( $postdata['type'] ) ) {
         if ( $postdata['type'] == 'schedule' ) {
-            $results = $results->where( 'type', 'log_activity' )->where( 'start_date', '>', current_time( 'mysql' ) );
+            $results = $results->where( 'type', 'schedule' );/*->where( 'start_date', '>', current_time( 'mysql' ) );*/
         } elseif ( $postdata['type'] == 'logs' ) {
-            $results = $results->where( 'type', 'log_activity' )->where( 'start_date', '<', current_time( 'mysql' ) );
+            $results = $results->where( 'type', 'log_activity' ); /*->where( 'start_date', '<', current_time( 'mysql' ) );*/
         } else {
             if ( is_array( $postdata['type'] ) ) {
                 $results = $results->whereIn( 'type', $postdata['type'] );
@@ -766,7 +766,7 @@ function erp_crm_get_feed_activity( $postdata ) {
         $results = $results->where( $db->raw( "DATE_FORMAT( `created_at`, '%Y-%m-%d' )" ), $postdata['created_at'] );
     }
 
-    $results = $results->orderBy( 'created_at', 'DESC' );
+    $results = $results->orderBy( 'start_date', 'ASC' );
 
     if ( isset( $postdata['limit'] ) && $postdata['limit'] != - 1 ) {
         $results = $results->skip( $postdata['offset'] )->take( $postdata['limit'] );
@@ -817,7 +817,7 @@ function erp_crm_get_feed_activity( $postdata ) {
         $value['message']               = erp_crm_format_activity_feed_message( $value['message'], $value );
         $value['created_by']['avatar']  = get_avatar_url( $value['created_by']['ID'] );
         $value['created_date']          = date( 'Y-m-d', strtotime( $value['created_at'] ) );
-        $value['created_timeline_date'] = date( 'Y-m-01', strtotime( $value['created_at'] ) );
+        $value['created_timeline_date'] = date( 'Y-m-01', strtotime( $value['start_date'] ) );
         // $value['component'] = 'timeline-item';
         $feeds[] = $value;
     }
@@ -879,7 +879,7 @@ function erp_crm_save_customer_feed_data( $data ) {
     $activity['message']               = erp_crm_format_activity_feed_message( $activity['message'], $activity );
     $activity['created_by']['avatar']  = get_avatar_url( $activity['created_by']['ID'] );
     $activity['created_date']          = date( 'Y-m-d', strtotime( $activity['created_at'] ) );
-    $activity['created_timeline_date'] = date( 'Y-m-01', strtotime( $activity['created_at'] ) );
+    $activity['created_timeline_date'] = date( 'Y-m-01', strtotime( $activity['start_date'] ) );
 
     if ( isset( $activity['extra']['attachments'] ) ) {
         $activity['extra']['attachments'] = erp_crm_process_attachment_data( $activity['extra']['attachments'] );
@@ -2409,7 +2409,7 @@ function erp_crm_get_todays_schedules_activity( $user_id = '' ) {
         'contact' => function ( $query ) {
             $query->with( 'types' );
         },
-    ] )->where( 'type', '=', 'log_activity' )
+    ] )->where( 'type', '=', 'schedule' )
         ->where( 'created_by', $user_id )
         ->where( $db->raw( "DATE_FORMAT( `start_date`, '%Y %m %d' )" ), \Carbon\Carbon::today()->format( 'Y m d' ) )
         ->take( 7 )
@@ -2442,7 +2442,7 @@ function erp_crm_get_next_seven_day_schedules_activities( $user_id = '' ) {
         'contact' => function ( $query ) {
             $query->with( 'types' );
         },
-    ] )->where( 'type', '=', 'log_activity' )
+    ] )->where( 'type', '=', 'schedule' )
         ->where( 'created_by', $user_id )
         ->where( $db->raw( "DATE_FORMAT( `start_date`, '%Y %m %d' )" ), '>=', \Carbon\Carbon::tomorrow()->format( 'Y m d' ) )
         ->where( $db->raw( "DATE_FORMAT( `start_date`, '%Y %m %d' )" ), '<=', \Carbon\Carbon::tomorrow()->addDays( 7 )->format( 'Y m d' ) )
@@ -2613,7 +2613,7 @@ function erp_crm_save_contact_owner_email_activity( $email, $inbound_email_addre
  */
 function erp_crm_prepare_calendar_schedule_data( $schedules ) {
     $schedules_data = [];
-
+    
     if ( $schedules ) {
         foreach ( $schedules as $key => $schedule ) {
             $start_date = date( 'Y-m-d', strtotime( $schedule['start_date'] ) );
@@ -2656,6 +2656,8 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
 
             $schedules_data[] = [
                 'schedule' => $schedule,
+				'start_date' => $schedule['start_date'],
+				'assigned_user'=>$assigned_user,                
                 'title'    => $title,
                 'color'    => $color,
                 'start'    => $start_date,
@@ -2678,7 +2680,7 @@ function erp_crm_prepare_calendar_schedule_data( $schedules ) {
 function erp_crm_get_schedule_data( $tab = '' ) {
     $args = [
         'number' => - 1,
-        'type'   => [ 'log_activity', 'tasks' ],
+        'type'   => [ 'schedule', 'tasks' ],
     ];
 
     /*
@@ -2691,10 +2693,19 @@ function erp_crm_get_schedule_data( $tab = '' ) {
     }
 
     $schedules      = erp_crm_get_feed_activity( $args );
+    //usort($schedules, 'date_compare');
     $schedules_data = erp_crm_prepare_calendar_schedule_data( $schedules );
 
     return $schedules_data;
 }
+/*
+function date_compare($a, $b)
+{
+    $t1 = strtotime($a['start_date']);
+    $t2 = strtotime($b['start_date']);
+    return $t1 - $t2;
+}    
+*/
 
 /**
  * Get CRM email from address.

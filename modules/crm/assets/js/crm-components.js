@@ -423,11 +423,139 @@ window.wpErpVue = window.wpErpVue || {};
             },
 
             isLog: function() {
-                return ( this.feed.type == 'log_activity' ) && !( new Date() < new Date( this.feed.start_date ) );
+                return ( this.feed.type == 'log_activity' ) /*&& !( new Date() < new Date( this.feed.start_date ) )*/;
             },
 
             isSchedule: function() {
-                return ( this.feed.type == 'log_activity' ) && ( new Date() < new Date( this.feed.start_date ) );
+                return ( this.feed.type == 'schedule' )/* && ( new Date() < new Date( this.feed.start_date ) )*/;
+            },
+
+            datetime: function() {
+                var datetime;
+
+                if ( this.isSchedule ) {
+                        var startDate = wperp.dateFormat( this.feed.start_date, 'j F' ),
+                        startTime = wperp.timeFormat( this.feed.start_date ),
+                        endDate = wperp.dateFormat( this.feed.end_date, 'j F' ),
+                        endTime = wperp.timeFormat( this.feed.end_date );
+
+
+                    if ( this.feed.extra.all_day == 'true' ) {
+                        if ( wperp.dateFormat( this.feed.start_date, 'Y-m-d' ) == wperp.dateFormat( this.feed.end_date, 'Y-m-d' ) ) {
+                            var datetime = startDate;
+                        } else {
+                            var datetime = startDate + ' to ' + endDate;
+                        }
+                    } else {
+                        if ( wperp.dateFormat( this.feed.start_date, 'Y-m-d' ) == wperp.dateFormat( this.feed.end_date, 'Y-m-d' ) ) {
+                            var datetime = startDate + ' at ' + startTime + ' to ' + endTime;
+                        } else {
+                            var datetime = startDate + ' at ' + startTime + ' to ' + endDate + ' at ' + endTime;
+                        }
+                    }
+                }
+
+                return datetime;
+            }
+        }
+    });
+
+    Vue.component( 'schedule-component', {
+        props: [ 'i18n', 'feed' ],
+
+        mixins: [ TimilineMixin ],
+
+        template: '#erp-crm-timeline-feed-log-activity',
+
+        data: function() {
+            return {
+                headerText: '',
+            }
+        },
+
+        computed: {
+            headerText: function() {
+                if ( this.countUser == 1 ) {
+                    return this.i18n.logHeaderTextSingleUser
+                        .replace( '{{createdUserName}}', this.createdUserName )
+                        .replace( '{{logType}}', this.logType )
+                        .replace( '{{logDateTime}}', this.logDateTime )
+                        .replace( '{{createdForUser}}', this.createdForUser )
+                        .replace( '{{otherUser}}', this.feed.extra.invited_user[0].name );
+                } else {
+                    return this.i18n.logHeaderText
+                        .replace( '{{createdUserName}}', this.createdUserName )
+                        .replace( '{{logType}}', this.logType )
+                        .replace( '{{logDateTime}}', this.logDateTime )
+                        .replace( '{{createdForUser}}', this.createdForUser )
+                }
+            },
+
+            headerScheduleText: function() {
+                if ( this.countUser == 1 ) {
+                    return this.i18n.scheduleHeaderTextSingleUser
+                        .replace( '{{createdUserName}}', this.createdUserName )
+                        .replace( '{{logType}}', this.logType )
+                        .replace( '{{createdForUser}}', this.createdForUser )
+                        .replace( '{{otherUser}}', this.feed.extra.invited_user[0].name );
+                } else {
+                    return this.i18n.scheduleHeaderText
+                        .replace( '{{createdUserName}}', this.createdUserName )
+                        .replace( '{{logType}}', this.logType )
+                        .replace( '{{createdForUser}}', this.createdForUser )
+                }
+            },
+
+
+            countUser: function () {
+                if (!this.feed.extra.invited_user) {
+                    return 0;
+                }
+                var count = this.feed.extra.invited_user.length;
+                return ( count <= 1 ) ? count : count + ' ' + this.i18n.others;
+            },
+
+            invitedUser: function() {
+                var self = this;
+                return this.feed.extra.invited_user.map( function( elm ) {
+                    if ( elm.id == wpCRMvue.current_user_id ) {
+                        return self.i18n.you;
+                    } else {
+                        return elm.name;
+                    }
+                } ).join("<br>");
+            },
+
+            createdUserImg: function() {
+                return this.feed.created_by.avatar;
+            },
+
+            createdUserName: function() {
+                return ( this.feed.created_by.ID == wpCRMvue.current_user_id ) ? this.i18n.you : this.feed.created_by.display_name;
+            },
+
+            createdForUser: function() {
+                return _.contains( this.feed.contact.types, 'company' ) ? this.feed.contact.company : this.feed.contact.first_name + ' ' + this.feed.contact.last_name;
+            },
+
+            logType: function() {
+                return ( this.feed.log_type == 'email' ) ? this.i18n.an + ' ' + this.feed.log_type : this.i18n.a + ' ' + this.feed.log_type;
+            },
+
+            islogTypeEmail: function() {
+                return this.feed.log_type == 'email';
+            },
+
+            logDateTime: function() {
+                return vm.$options.filters.formatDateTime( this.feed.start_date );
+            },
+
+            isLog: function() {
+                return ( this.feed.type == 'log_activity' )  ;
+            },
+
+            isSchedule: function() {
+                return ( this.feed.type == 'schedule' ) ;
             },
 
             datetime: function() {

@@ -8,7 +8,7 @@
 
         <# if ( data.schedule.type == 'tasks' ) { #>
             <?php esc_attr_e( 'assigned a task', 'erp' ); ?>
-            <# } else if( ( data.schedule.type == 'log_activity' ) && ( new Date( Date.now() - 24*60*60*1000 )  <= new Date( data.schedule.start_date ) ) ) { #>
+            <# } else if( ( data.schedule.type == 'schedule' ) { #>
             <?php esc_attr_e( 'have scheduled', 'erp' ) ?>
         <# } else { #>
             <?php esc_attr_e( 'logged', 'erp' ); ?>
