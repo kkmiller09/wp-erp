@@ -51,8 +51,9 @@
         bindEvents: function() {
             // close the modal window
             $('form.erp-modal-form', '#'+this.settings.id).on('submit', $.proxy(this.formSubmit, this) );
-            $('.erp-modal-backdrop, .erp-modal .close').on('click', $.proxy(this.closeModal, this) );
-
+            //$('.erp-modal-backdrop, .erp-modal .close').on('click', $.proxy(this.closeModal, this) );
+            $('.erp-modal .close').on('click', $.proxy(this.closeModal, this) );
+            
             $('body').on( 'keydown', '#'+this.id, $.proxy(this.onEscapeKey, this) );
             $('#'+this.id).focus();
 
